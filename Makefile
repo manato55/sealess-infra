@@ -5,6 +5,8 @@ down:
 build:
 	docker-compose build
 ps:
-	docker-compose ps
+	docker ps -a
 server:
 	docker-compose exec server bash
+rm-image:
+	docker rmi `docker images -q`
