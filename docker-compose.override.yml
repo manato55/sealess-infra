@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  server:
+    build:
+      args:
+        - DB_CONNECTION=${MYSQL_DB_CONNECTION}
+        - DB_HOST=${MYSQL_DB_HOST}
+        - DB_DATABASE=${MYSQL_DATABASE}
+        - DB_USERNAME=${MYSQL_USER}
+        - DB_PASSWORD=${MYSQL_PASSWORD}
+        - ALLOWED_ORIGIN=${ALLOWED_ORIGIN}
+    volumes:
+      - ../backend:/work/backend
+      - ./docker/php/bash/.bash_history:/root/.bash_history
+      - ./docker/php/bash/psysh:/root/.config/psysh
+    depends_on:
+      - db
+
+  db:
+    build: ./docker/mysql
+    volumes:
+      - ./docker/mysql/db-store:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=db
+    depends_on:
+      - db
+    ports:
+      - 8888:80
+    volumes:
+      - ./docker/pma/sessions:/sessions 
+
+  mailhog:
+    image: mailhog/mailhog
+    build: ./docker/mailhog
+    ports:
+      - 8025:8025

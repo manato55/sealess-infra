@@ -1,0 +1,6 @@
+.env
+.env.prod
+docker/nginx_proxy/cert-key/localhost+1-key.pem
+docker/nginx_proxy/cert-key/localhost+1.pem
+
+docker/mysql/db-store
