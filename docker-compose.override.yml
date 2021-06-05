@@ -10,6 +10,14 @@ services:
         - DB_USERNAME=${MYSQL_USER}
         - DB_PASSWORD=${MYSQL_PASSWORD}
         - ALLOWED_ORIGIN=${ALLOWED_ORIGIN}
+        - APP_URL=${APP_URL}
+        - MAIL_MAILER=${MAIL_MAILER}
+        - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+        - MAIL_HOST=${MAIL_HOST}
+        - MAIL_PORT=${MAIL_PORT}
+        - MAIL_USERNAME=${MAIL_USERNAME}
+        - MAIL_PASSWORD=${MAIL_PASSWORD}
+        - MAIL_ENCRYPTION=${MAIL_ENCRYPTION}
     volumes:
       - ../backend:/work/backend
       - ./docker/php/bash/.bash_history:/root/.bash_history
@@ -45,3 +53,4 @@ services:
     build: ./docker/mailhog
     ports:
       - 8025:8025
+      - 1025:1025

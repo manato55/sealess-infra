@@ -6,7 +6,15 @@ ARG DB_HOST
 ARG DB_DATABASE
 ARG DB_USERNAME
 ARG DB_PASSWORD
+ARG APP_URL
 ARG ALLOWED_ORIGIN
+ARG MAIL_MAILER
+ARG MAIL_HOST
+ARG MAIL_PORT
+ARG MAIL_USERNAME
+ARG MAIL_PASSWORD
+ARG MAIL_ENCRYPTION
+ARG MAIL_FROM_ADDRESS
 
 # timezone environment
 ENV TZ=Asia/Tokyo \
@@ -23,6 +31,14 @@ ENV TZ=Asia/Tokyo \
   DB_DATABASE=${DB_DATABASE} \
   DB_USERNAME=${DB_USERNAME} \
   DB_PASSWORD=${DB_PASSWORD} \
+  APP_URL=${APP_URL} \
+  MAIL_MAILER=${MAIL_MAILER} \
+  MAIL_HOST=${MAIL_HOST} \
+  MAIL_PORT=${MAIL_PORT} \
+  MAIL_USERNAME=${MAIL_USERNAME} \
+  MAIL_PASSWORD=${MAIL_PASSWORD} \
+  MAIL_ENCRYPTION=${MAIL_ENCRYPTION} \
+  MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS} \
   ALLOWED_ORIGIN=${ALLOWED_ORIGIN} 
 
 
@@ -30,14 +46,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # install composer
 RUN apt-get update && \
-  apt-get -y install git cron libicu-dev libgmp-dev libonig-dev libzip-dev unzip locales libfreetype6-dev libjpeg62-turbo-dev libpng-dev && \
+  apt-get -y install git cron libicu-dev libgmp-dev libonig-dev libzip-dev unzip locales libfreetype6-dev libjpeg62-turbo-dev libpng-dev imagemagick libmagickwand-dev && \
   apt-get clean && \
+  pecl install imagick && \
   rm -rf /var/lib/apt/lists/* && \
   locale-gen en_US.UTF-8 && \
   localedef -f UTF-8 -i en_US en_US.UTF-8 && \
   mkdir /var/run/php-fpm && \
   docker-php-ext-configure gmp && \
-  docker-php-ext-install gmp intl pdo_mysql mbstring zip gmp bcmath gd && \
+  docker-php-ext-configure gd --with-freetype --with-jpeg && \
+  docker-php-ext-install gmp intl pdo_mysql mbstring zip gmp bcmath -j$(nproc) gd && \
+  docker-php-ext-enable imagick && \
   composer config -g process-timeout 3600 && \
   composer config -g repos.packagist composer https://packagist.org
   # push通知に必要なmodule

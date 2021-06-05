@@ -19,6 +19,7 @@ ARG MAIL_PORT
 ARG MAIL_USERNAME
 ARG MAIL_PASSWORD
 ARG MAIL_ENCRYPTION
+ARG MAIL_FROM_ADDRESS
 
 # timezone environment
 ENV TZ=Asia/Tokyo \
@@ -43,6 +44,7 @@ ENV TZ=Asia/Tokyo \
   MAIL_MAILER=${MAIL_MAILER} \
   MAIL_HOST=${MAIL_HOST} \
   MAIL_PORT=${MAIL_PORT} \
+  MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS} \
   MAIL_USERNAME=${MAIL_USERNAME} \
   MAIL_PASSWORD=${MAIL_PASSWORD} \
   MAIL_ENCRYPTION=${MAIL_ENCRYPTION}
@@ -50,15 +52,18 @@ ENV TZ=Asia/Tokyo \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN apt-get update && apt-get -y install vim && \
-  apt-get -y install git libicu-dev libgmp-dev libonig-dev libzip-dev unzip locales libfreetype6-dev libjpeg62-turbo-dev libpng-dev && \
+  apt-get -y install git libicu-dev libgmp-dev libonig-dev libzip-dev unzip locales libfreetype6-dev libjpeg62-turbo-dev libpng-dev imagemagick libmagickwand-dev && \
   apt-get clean && \
+  pecl install imagick && \
   rm -rf /var/lib/apt/lists/* && \
   locale-gen en_US.UTF-8 && \
   localedef -f UTF-8 -i en_US en_US.UTF-8 && \
   mkdir /var/run/php-fpm && \
   mkdir /var/log/php && \
   docker-php-ext-configure gmp && \
-  docker-php-ext-install intl pdo_mysql mbstring zip bcmath opcache gd gmp
+  docker-php-ext-configure gd --with-freetype --with-jpeg && \
+  docker-php-ext-install intl pdo_mysql mbstring zip bcmath opcache -j$(nproc) gd gmp && \
+  docker-php-ext-enable imagick
 
 RUN git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/manato55/tennisup-backend.git ./backend && \
   cd backend && \
