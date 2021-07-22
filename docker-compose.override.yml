@@ -44,13 +44,6 @@ services:
     depends_on:
       - db
     ports:
-      - 8888:80
+      - 8882:80
     volumes:
       - ./docker/pma/sessions:/sessions 
-
-  mailhog:
-    image: mailhog/mailhog
-    build: ./docker/mailhog
-    ports:
-      - 8025:8025
-      - 1025:1025
