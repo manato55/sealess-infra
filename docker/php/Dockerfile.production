@@ -71,8 +71,6 @@ RUN git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/manato55/sealess-
   composer config -g process-timeout 3600 && \
   composer config -g repos.packagist composer https://packagist.jp && \
   composer install --optimize-autoloader --no-dev && \
-  php artisan webpush:vapid && \
-  php artisan vendor:publish --provider="NotificationChannels\WebPush\WebPushServiceProvider" --tag="config" && \
   php artisan key:generate && \
   php artisan config:cache && \
   php artisan view:cache && \
