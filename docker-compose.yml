@@ -4,19 +4,6 @@ volumes:
   php-fpm-socket:
 
 services:
-  back-web:
-    build: ./docker/nginx_back
-    volumes:
-      - php-fpm-socket:/var/run/php-fpm
-      # 画像やファイルなど、php 以外は nginx が直接扱うので、nginx にもbackendをマウントする
-      - ../backend/public:/work/backend/public
-      - ../backend/storage:/work/backend/storage
-    depends_on:
-      - server
-    ports:
-      - 82:80
-      - 443:443
-
   server:
     build:
       context: ./docker/php

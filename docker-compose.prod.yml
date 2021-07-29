@@ -4,6 +4,25 @@ volumes:
   laravel-storage:
 
 services:
+  back-web:
+    build:
+      context: ./docker
+      dockerfile: nginx_back/Dockerfile.production
+      args:
+        - DOMAIN=${DOMAIN}
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      # 画像やファイルなど、php 以外は nginx が直接扱うので、nginx にもbackendをマウントする
+      - ../backend/public:/work/backend/public
+      - ../backend/storage:/work/backend/storage
+      - ./docker/nginx_back/${DOMAIN}:/etc/letsencrypt/live/${DOMAIN}
+    depends_on:
+      - server
+    ports:
+      - 82:80
+      - 443:443
+    restart: always
+
   server:
     build:
       # ビルドコンテキストを使うと、dockerfileでCOPY等する際の相対パスがdoker-compose.ymlファイルからの相対パスになる
@@ -30,7 +49,4 @@ services:
 
     volumes:
       - laravel-storage:/work/backend/storage
-    restart: always
-
-  back-web:
     restart: always
