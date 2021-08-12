@@ -8,14 +8,14 @@ services:
     build:
       context: ./docker
       dockerfile: nginx_back/Dockerfile.production
-      args:
-        - DOMAIN=${DOMAIN}
+      # args:
+      #   - DOMAIN=${DOMAIN}
     volumes:
       - php-fpm-socket:/var/run/php-fpm
       # 画像やファイルなど、php 以外は nginx が直接扱うので、nginx にもbackendをマウントする
       - ../backend/public:/work/backend/public
       - ../backend/storage:/work/backend/storage
-      - ./docker/nginx_back/${DOMAIN}:/etc/letsencrypt/live/${DOMAIN}
+      # - ./docker/nginx_back/${DOMAIN}:/etc/letsencrypt/live/${DOMAIN}
     depends_on:
       - server
     ports:
