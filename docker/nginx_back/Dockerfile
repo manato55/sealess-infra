@@ -7,6 +7,6 @@ RUN apk update && \
   mkdir -p /work/backend/public && \
   touch /work/backend/public/index.php
 
-COPY ./default.conf /etc/nginx/conf.d/default.conf
+COPY ./default.local.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /work/backend/public
